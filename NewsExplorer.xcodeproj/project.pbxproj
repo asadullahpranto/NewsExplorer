@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5103AF652F0423ED00113485 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF642F0423ED00113485 /* RxCocoa */; };
+		5103AF672F0423ED00113485 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF662F0423ED00113485 /* RxRelay */; };
+		5103AF692F0423ED00113485 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF682F0423ED00113485 /* RxSwift */; };
+		5164D9BB2F04604F009177AA /* SVProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 5164D9BA2F04604F009177AA /* SVProgressHUD */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		5103AF482F041CAF00113485 /* NewsExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewsExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -14,7 +21,7 @@
 		5103AF5D2F041CAF00113485 /* Exceptions for "NewsExplorer" folder in "NewsExplorer" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				SupportingFiles/Info.plist,
 			);
 			target = 5103AF472F041CAF00113485 /* NewsExplorer */;
 		};
@@ -36,6 +43,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5164D9BB2F04604F009177AA /* SVProgressHUD in Frameworks */,
+				5103AF692F0423ED00113485 /* RxSwift in Frameworks */,
+				5103AF672F0423ED00113485 /* RxRelay in Frameworks */,
+				5103AF652F0423ED00113485 /* RxCocoa in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +89,10 @@
 			);
 			name = NewsExplorer;
 			packageProductDependencies = (
+				5103AF642F0423ED00113485 /* RxCocoa */,
+				5103AF662F0423ED00113485 /* RxRelay */,
+				5103AF682F0423ED00113485 /* RxSwift */,
+				5164D9BA2F04604F009177AA /* SVProgressHUD */,
 			);
 			productName = NewsExplorer;
 			productReference = 5103AF482F041CAF00113485 /* NewsExplorer.app */;
@@ -107,6 +122,10 @@
 			);
 			mainGroup = 5103AF3F2F041CAE00113485;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5103AF632F0423ED00113485 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				5164D9B92F04604F009177AA /* XCRemoteSwiftPackageReference "SVProgressHUD" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5103AF492F041CAF00113485 /* Products */;
 			projectDirPath = "";
@@ -147,12 +166,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9U8X8QQP8S;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NewsExplorer/Info.plist;
+				INFOPLIST_FILE = NewsExplorer/SupportingFiles/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -175,12 +195,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9U8X8QQP8S;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = NewsExplorer/Info.plist;
+				INFOPLIST_FILE = NewsExplorer/SupportingFiles/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -337,6 +358,48 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5103AF632F0423ED00113485 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.9.1;
+			};
+		};
+		5164D9B92F04604F009177AA /* XCRemoteSwiftPackageReference "SVProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SVProgressHUD/SVProgressHUD.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5103AF642F0423ED00113485 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5103AF632F0423ED00113485 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		5103AF662F0423ED00113485 /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5103AF632F0423ED00113485 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		5103AF682F0423ED00113485 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5103AF632F0423ED00113485 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		5164D9BA2F04604F009177AA /* SVProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5164D9B92F04604F009177AA /* XCRemoteSwiftPackageReference "SVProgressHUD" */;
+			productName = SVProgressHUD;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5103AF402F041CAE00113485 /* Project object */;
 }
