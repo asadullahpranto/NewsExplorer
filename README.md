@@ -7,6 +7,10 @@ git clone https://github.com/asadullahpranto/NewsExplorer.git
 cd NewsExplorer
 open NewsExplorer.xcodeproj
 ```
+
+## Prerequisites
+A free API Key from NewsAPI.org.
+
 ## Build and Run
 
 Wait for Xcode to finish resolving Swift Package Dependencies (RxSwift).
