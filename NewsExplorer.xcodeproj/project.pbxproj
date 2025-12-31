@@ -10,7 +10,6 @@
 		5103AF652F0423ED00113485 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF642F0423ED00113485 /* RxCocoa */; };
 		5103AF672F0423ED00113485 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF662F0423ED00113485 /* RxRelay */; };
 		5103AF692F0423ED00113485 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF682F0423ED00113485 /* RxSwift */; };
-		5164D9BB2F04604F009177AA /* SVProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 5164D9BA2F04604F009177AA /* SVProgressHUD */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +42,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5164D9BB2F04604F009177AA /* SVProgressHUD in Frameworks */,
 				5103AF692F0423ED00113485 /* RxSwift in Frameworks */,
 				5103AF672F0423ED00113485 /* RxRelay in Frameworks */,
 				5103AF652F0423ED00113485 /* RxCocoa in Frameworks */,
@@ -92,7 +90,6 @@
 				5103AF642F0423ED00113485 /* RxCocoa */,
 				5103AF662F0423ED00113485 /* RxRelay */,
 				5103AF682F0423ED00113485 /* RxSwift */,
-				5164D9BA2F04604F009177AA /* SVProgressHUD */,
 			);
 			productName = NewsExplorer;
 			productReference = 5103AF482F041CAF00113485 /* NewsExplorer.app */;
@@ -124,7 +121,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				5103AF632F0423ED00113485 /* XCRemoteSwiftPackageReference "RxSwift" */,
-				5164D9B92F04604F009177AA /* XCRemoteSwiftPackageReference "SVProgressHUD" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5103AF492F041CAF00113485 /* Products */;
@@ -368,14 +364,6 @@
 				minimumVersion = 6.9.1;
 			};
 		};
-		5164D9B92F04604F009177AA /* XCRemoteSwiftPackageReference "SVProgressHUD" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SVProgressHUD/SVProgressHUD.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.1;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -393,11 +381,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5103AF632F0423ED00113485 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
-		};
-		5164D9BA2F04604F009177AA /* SVProgressHUD */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5164D9B92F04604F009177AA /* XCRemoteSwiftPackageReference "SVProgressHUD" */;
-			productName = SVProgressHUD;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

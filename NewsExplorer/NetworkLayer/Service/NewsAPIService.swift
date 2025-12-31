@@ -8,10 +8,6 @@
 import Foundation
 import RxSwift
 
-protocol NewsAPIRepository {
-    func fetchArticles<T: Decodable>(query: String, fromDate: String, pageNo: Int) -> Single<T>
-}
-
 final class NewsAPIService: NewsAPIRepository, HTTPClient {
     
     func fetchArticles<T: Decodable>(query: String, fromDate: String = "2025-12-05", pageNo: Int = 1) -> Single<T> {
