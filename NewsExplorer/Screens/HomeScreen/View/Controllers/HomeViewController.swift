@@ -13,6 +13,8 @@ class HomeViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
     
+    weak var coordinator: HomeCoordinator?
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -63,14 +65,6 @@ class HomeViewController: UIViewController {
                 let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableViewCell.className) as! HomeTableViewCell
                 cell.configure(with: article)
                 
-//                if let imageUrl = article.urlToImage {
-//                    ImageLoader.shared.loadImage(from: imageUrl, row: row) { [weak self] image in
-//                        if let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)) as? HomeTableViewCell {
-//                            cell.articleImageView.image = image
-//                        }
-//                    }
-//                }
-                
                 return cell
             }
             .disposed(by: disposeBag)
@@ -78,16 +72,8 @@ class HomeViewController: UIViewController {
         
         // Handle row selection
         tableView.rx.modelSelected(Article.self)
-            .subscribe(onNext: { article in
-    
-                let webVC = WebViewController()
-                let webNavVC = UINavigationController(rootViewController: webVC)
-                webNavVC.modalPresentationStyle = .fullScreen
-                
-                if let url = URL(string: article.url) {
-                    webVC.articleURL = url
-                    self.present(webNavVC, animated: true)
-                }
+            .subscribe(onNext: { [weak self] article in
+                self?.coordinator?.showArticleDetail(article)
             })
             .disposed(by: disposeBag)
         

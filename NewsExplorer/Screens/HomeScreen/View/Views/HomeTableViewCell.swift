@@ -37,6 +37,7 @@ class HomeTableViewCell: UITableViewCell {
         cellDisposeBag = DisposeBag() // 🔥 cancels image request
         currentImageURL = nil
         articleImageView.image = UIImage(resource: .placeholder)
+        articleImageView.contentMode = .scaleAspectFill
     }
     
     // MARK: - Configuration
@@ -103,7 +104,11 @@ class HomeTableViewCell: UITableViewCell {
         descriptionLabel.textColor = .secondaryLabel
         descriptionLabel.numberOfLines = 3
         
-        let stackView = UIStackView(arrangedSubviews: [sourceLabel, titleLabel, descriptionLabel])
+        let stackView = UIStackView(arrangedSubviews: [
+            sourceLabel,
+            titleLabel,
+            descriptionLabel
+        ])
         stackView.axis = .vertical
         stackView.spacing = 8
         stackView.translatesAutoresizingMaskIntoConstraints = false

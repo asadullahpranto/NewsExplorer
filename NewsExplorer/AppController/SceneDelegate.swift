@@ -10,7 +10,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    var rootCoordinator: RootCoordinator?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -57,12 +57,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 extension SceneDelegate {
     private func setupRootViewController(for windowScene: UIWindowScene) {
-        let homeVC = HomeViewController()
-        let homeNavVC = UINavigationController(rootViewController: homeVC)
-//        homeNavVC.navigationBar.prefersLargeTitles = true
-
+//        let homeVC = HomeViewController()
+//        let homeNavVC = UINavigationController(rootViewController: homeVC)
+////        homeNavVC.navigationBar.prefersLargeTitles = true
+//
+//        window = UIWindow(windowScene: windowScene)
+//        window?.rootViewController = homeNavVC
+//        window?.makeKeyAndVisible()
+        
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = homeNavVC
+        
+        let rootNavController = UINavigationController()
+        window?.rootViewController = rootNavController
+        rootCoordinator = HomeCoordinator(navigationController: rootNavController)
+        rootCoordinator?.start()
+        
         window?.makeKeyAndVisible()
     }
 }

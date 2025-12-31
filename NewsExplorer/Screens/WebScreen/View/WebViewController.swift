@@ -7,96 +7,125 @@
 
 import UIKit
 import WebKit
-import SVProgressHUD
 
-class WebViewController: UIViewController {
+final class WebViewController: UIViewController {
     
-    var wkWebView: WKWebView!
-    
+    // MARK: - Properties
+    private var wkWebView: WKWebView!
     var articleURL: URL?
     
-    func makeBackButton() -> UIButton {
-        let backButtonImage = UIImage(systemName: "chevron.left")
-        let backButton = UIButton(type: .custom)
-        backButton.setImage(backButtonImage, for: .normal)
-        backButton.tintColor = .black
-        backButton.addTarget(self, action: #selector(self.backButtonPressed), for: .touchUpInside)
-        return backButton
-    }
+    private let progressView: UIProgressView = {
+        let progress = UIProgressView(progressViewStyle: .default)
+        progress.tintColor = .systemBlue
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        return progress
+    }()
     
-    @objc func backButtonPressed() {
-        SVProgressHUD.dismiss()
-        dismiss(animated: true, completion: nil)
-    }
+    private var estimatedProgressObserver: NSKeyValueObservation?
     
+    // MARK: - Lifecycle
     override func loadView() {
-        super.loadView()
-        
         let webConfiguration = WKWebViewConfiguration()
-        
-        // 2. Initialize webView with the frame of the screen
         wkWebView = WKWebView(frame: .zero, configuration: webConfiguration)
         wkWebView.navigationDelegate = self
-        
-        // 3. Assign directly to view
         view = wkWebView
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        SVProgressHUD.dismiss()
-    }
-    
-    private func setNavBarStyle() {
-        self.navigationItem.title = "Article"
-        
-        // Standard system Close/Done button is better for Modal Full Screen
-        let closeButton = UIBarButtonItem(title: "Close", style: .done, target: self, action: #selector(backButtonPressed))
-        self.navigationItem.leftBarButtonItem = closeButton
-        
-        // Make the bar look modern (iOS 15+ scrollEdgeAppearance)
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .white
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationBar()
+        setupProgressView()
+        setupObserver()
+        loadContent()
+    }
+    
+    // MARK: - Setup
+    private func setupNavigationBar() {
+        navigationItem.title = "Article"
+
+        if isModal {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                barButtonSystemItem: .close,
+                target: self,
+                action: #selector(handleDismiss)
+            )
+        }
         
-        setNavBarStyle()
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
         
-        if let articleURL {
-            let request = URLRequest(url: articleURL)
-            SVProgressHUD.show()
-            wkWebView.load(request)
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+    }
+    
+    private func setupProgressView() {
+        view.addSubview(progressView)
+        
+        NSLayoutConstraint.activate([
+            progressView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            progressView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            progressView.heightAnchor.constraint(equalToConstant: 2)
+        ])
+        
+        view.bringSubviewToFront(progressView)
+    }
+    
+    private func setupObserver() {
+        estimatedProgressObserver = wkWebView.observe(\.estimatedProgress, options: [.new]) { [weak self] webView, _ in
+            guard let self = self else { return }
+            self.progressView.progress = Float(webView.estimatedProgress)
+            
+            let isFinished = webView.estimatedProgress >= 1.0
+            UIView.animate(withDuration: 0.3, animations: {
+                self.progressView.alpha = isFinished ? 0 : 1
+            }) { _ in
+                if isFinished { self.progressView.progress = 0 }
+            }
+        }
+    }
+    
+    private func loadContent() {
+        guard let url = articleURL else { return }
+        wkWebView.load(URLRequest(url: url))
+    }
+    
+    @objc private func handleDismiss() {
+        if navigationController?.viewControllers.first == self {
+            dismiss(animated: true)
+        } else {
+            navigationController?.popViewController(animated: true)
         }
     }
 }
 
-
+// MARK: - WKNavigationDelegate
 extension WebViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        SVProgressHUD.dismiss()
-    }
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        SVProgressHUD.dismiss()
-    }
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-        
-        let label = UILabel(frame: CGRect.zero)
-        label.text = "Network Issue"
-        label.font = .systemFont(ofSize: 22, weight: .medium)
-        label.textColor = .black
-        label.alpha = 0.6
-        wkWebView.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.centerXAnchor.constraint(equalTo: wkWebView.centerXAnchor).isActive = true
-        label.centerYAnchor.constraint(equalTo: wkWebView.centerYAnchor).isActive = true
-        
-        SVProgressHUD.dismiss()
+        showErrorState()
     }
     
+    private func showErrorState() {
+        let errorLabel = UILabel()
+        errorLabel.text = "Unable to load page"
+        errorLabel.textColor = .secondaryLabel
+        errorLabel.font = .systemFont(ofSize: 16, weight: .medium)
+        errorLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(errorLabel)
+        NSLayoutConstraint.activate([
+            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+}
+
+// MARK: - Helper Extension
+extension UIViewController {
+    var isModal: Bool {
+        return presentingViewController != nil ||
+               navigationController?.presentingViewController?.presentedViewController == navigationController
+    }
 }
 
