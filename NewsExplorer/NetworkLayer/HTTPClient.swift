@@ -46,6 +46,9 @@ extension HTTPClient {
             case 401:
                 throw NetworkError.unauthorized
                 
+            case 426:
+                throw NetworkError.upgrationRequired
+                
             default:
                 throw NetworkError.unexpectedStatus
             }

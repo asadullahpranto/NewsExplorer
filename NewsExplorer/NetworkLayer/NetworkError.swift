@@ -7,31 +7,38 @@
 
 import Foundation
 
-enum NetworkError: Error {
+enum NetworkError: LocalizedError { // Use LocalizedError instead of just Error
     case invalidURL
     case apiError(Error)
     case invalidResponse
     case decodingError(Error)
     case unauthorized
     case unexpectedStatus
+    case upgrationRequired
     case unknown
     
-    var localizedDescription: String {
+    // The standard property for LocalizedError
+    var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "Invalid URL."
+            return "Invalid URL format. Please try again."
         case .apiError(let error):
-            return "API Error: \(error.localizedDescription)"
+            return "Server connection issue: \(error.localizedDescription)"
         case .invalidResponse:
-            return "Invalid response from server."
+            return "The server sent an invalid response."
         case .decodingError(let error):
-            return "Failed to decode data: \(error.localizedDescription)"
+            // Professional tip: Don't show technical decoding errors to end users.
+            // Log the 'error' to your console, but show a friendly message to the user.
+            print("DEBUG: Decoding Error -> \(error)")
+            return "We had trouble processing the data from the server."
         case .unauthorized:
-            return "Unauthorized request."
+            return "Your session has expired. Please log in again."
         case .unexpectedStatus:
-            return "Unexpected status code from server."
+            return "Something went wrong on our end. Please try again later."
+        case .upgrationRequired:
+            return "You've reached the limit of the free tier. Please upgrade your plan!"
         case .unknown:
-            return "Unknown error occurred."
+            return "An unexpected error occurred."
         }
     }
 }

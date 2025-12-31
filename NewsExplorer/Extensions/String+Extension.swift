@@ -16,4 +16,12 @@ extension String {
         guard let date = input.date(from: self) else { return self }
         return output.string(from: date)
     }
+    
+    func toRelativeTime() -> String {
+        let formatter = ISO8601DateFormatter()
+        guard let date = formatter.date(from: self) else { return self }
+        let relativeFormatter = RelativeDateTimeFormatter()
+        relativeFormatter.unitsStyle = .full
+        return relativeFormatter.localizedString(for: date, relativeTo: Date())
+    }
 }

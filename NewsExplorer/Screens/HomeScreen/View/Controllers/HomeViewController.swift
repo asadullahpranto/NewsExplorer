@@ -12,8 +12,18 @@ import RxCocoa
 class HomeViewController: UIViewController {
     
     private let disposeBag = DisposeBag()
-    
     weak var coordinator: HomeCoordinator?
+    
+    private let refreshControl = UIRefreshControl()
+    
+    private func createFooterSpinner() -> UIView {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 64))
+        let spinner = UIActivityIndicatorView()
+        spinner.center = footerView.center
+        footerView.addSubview(spinner)
+        spinner.startAnimating()
+        return footerView
+    }
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -52,8 +62,15 @@ class HomeViewController: UIViewController {
     
     private func configureTableView() {
         tableView.register(HomeTableViewCell.self, forCellReuseIdentifier: HomeTableViewCell.className)
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 140
+        tableView.separatorStyle = .none
+
+        refreshControl.tintColor = .systemBlue
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "Updating news...",
+            attributes: [.font: UIFont.systemFont(ofSize: 12)]
+        )
+        
+        tableView.refreshControl = refreshControl
     }
     
     private func bindViewModel() {
@@ -67,6 +84,56 @@ class HomeViewController: UIViewController {
                 
                 return cell
             }
+            .disposed(by: disposeBag)
+        
+        tableView.rx.willDisplayCell
+            .subscribe(onNext: { [weak self] cell, indexPath in
+                guard let self = self else { return }
+                
+                let totalRows = self.tableView.numberOfRows(inSection: indexPath.section)
+                
+                // 🚀 Professional optimization: Trigger load when user is 3 rows from bottom
+                // This makes the infinite scroll feel smoother (no waiting)
+                // Modify the willDisplayCell logic
+                if indexPath.row == totalRows - 1 && !viewModel.isLastPage.value {
+                    self.viewModel.fetchArticles()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        refreshControl.rx.controlEvent(.valueChanged)
+            .subscribe(onNext: { [weak self] in
+                // We pass isRefresh: true to reset the page count and clear the list
+                self?.viewModel.fetchArticles(isRefresh: true)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.isFetching
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] fetching in
+                guard let self = self else { return }
+                
+                if fetching {
+                    // Only show footer if we aren't at page 1 (refreshing)
+                    // and if we actually have data to append to
+                    if !self.viewModel.articles.value.isEmpty && !self.refreshControl.isRefreshing {
+                        self.tableView.tableFooterView = self.createFooterSpinner()
+                    }
+                } else {
+                    // Logic to hide the footer with a slight delay for smooth UX
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        if !self.viewModel.isFetching.value {
+                            self.tableView.tableFooterView = nil
+                        }
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        // This ensures the top spinner is ALWAYS in sync with the ViewModel
+        viewModel.isFetching
+            .observe(on: MainScheduler.instance)
+            .bind(to: refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
 
         
@@ -87,7 +154,7 @@ class HomeViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.fetchArticles(query: "apple")
+        viewModel.fetchArticles()
     }
 
     private func setupTableViewConstraints() {

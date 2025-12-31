@@ -8,7 +8,7 @@
 import Foundation
 
 enum NewsAPI {
-    case fetchArticles(query: String, fromDate: String)
+    case fetchArticles(query: String, fromDate: String, pageNo: Int)
 }
 
 extension NewsAPI: APIEndpoint {
@@ -49,11 +49,13 @@ extension NewsAPI: APIEndpoint {
     
     var queryItems: [URLQueryItem]? {
         switch self {
-        case .fetchArticles(let query, let fromDate):
+        case .fetchArticles(let query, let fromDate, let pageNo):
             return [
                 URLQueryItem(name: "q", value: query),
                 URLQueryItem(name: "from", value: fromDate),
                 URLQueryItem(name: "sortBy", value: "publishedAt"),
+                URLQueryItem(name: "pageSize", value: "\(30)"),
+                URLQueryItem(name: "page", value: "\(pageNo)"),
                 URLQueryItem(name: "apiKey", value: apiKey)
             ]
         }
