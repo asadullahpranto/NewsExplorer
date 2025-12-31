@@ -10,10 +10,12 @@
 		5103AF652F0423ED00113485 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF642F0423ED00113485 /* RxCocoa */; };
 		5103AF672F0423ED00113485 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF662F0423ED00113485 /* RxRelay */; };
 		5103AF692F0423ED00113485 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5103AF682F0423ED00113485 /* RxSwift */; };
+		51BCAD9E2F0518150002160D /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 51BCAD9D2F0518150002160D /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		5103AF482F041CAF00113485 /* NewsExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewsExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		51BCAD9D2F0518150002160D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -54,6 +56,7 @@
 		5103AF3F2F041CAE00113485 = {
 			isa = PBXGroup;
 			children = (
+				51BCAD9D2F0518150002160D /* README.md */,
 				5103AF4A2F041CAF00113485 /* NewsExplorer */,
 				5103AF492F041CAF00113485 /* Products */,
 			);
@@ -137,6 +140,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51BCAD9E2F0518150002160D /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
