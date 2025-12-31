@@ -35,7 +35,7 @@ final class ImageLoader {
             })
             .observe(on: MainScheduler.instance) // Only switch to main for UI
             .catchAndReturn(nil)
-            .share(replay: 1) // 🚀 Professional: Prevents multiple downloads for the same URL
+            .share(replay: 1)
     }
     
     private func downsample(imageData: Data, to pointSize: CGSize?) -> UIImage? {

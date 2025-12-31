@@ -78,7 +78,6 @@ class HomeViewController: UIViewController {
         viewModel.articles
             .observe(on: MainScheduler.instance)
             .bind(to: tableView.rx.items) { tableView, row, article in
-                // Create cell with subtitle style
                 let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableViewCell.className) as! HomeTableViewCell
                 cell.configure(with: article)
                 
@@ -92,9 +91,6 @@ class HomeViewController: UIViewController {
                 
                 let totalRows = self.tableView.numberOfRows(inSection: indexPath.section)
                 
-                // 🚀 Professional optimization: Trigger load when user is 3 rows from bottom
-                // This makes the infinite scroll feel smoother (no waiting)
-                // Modify the willDisplayCell logic
                 if indexPath.row == totalRows - 1 && !viewModel.isLastPage.value {
                     self.viewModel.fetchArticles()
                 }

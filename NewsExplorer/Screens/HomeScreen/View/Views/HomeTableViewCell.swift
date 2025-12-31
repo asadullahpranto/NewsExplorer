@@ -104,7 +104,7 @@ final class HomeTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        // Performance: Manually setting the shadow path prevents expensive off-screen rendering
+        // Manually setting the shadow path prevents expensive off-screen rendering
         containerView.layer.shadowPath = UIBezierPath(roundedRect: containerView.bounds, cornerRadius: 16).cgPath
     }
     
@@ -113,33 +113,27 @@ final class HomeTableViewCell: UITableViewCell {
         sourceLabel.text = article.source.name.uppercased()
         titleLabel.text = article.title
         descriptionLabel.text = article.description
-        
-        // Professional Touch: Convert ISO date to relative time (e.g., "2 hours ago")
+
         dateLabel.text = article.publishedAt.toRelativeTime()
         
-        // Handle missing descriptions elegantly
         descriptionLabel.isHidden = (article.description == nil || article.description?.isEmpty == true)
         
         loadImage(url: article.urlToImage)
     }
     
     private func loadImage(url: String?) {
-        // 1. Check for nil URL
         guard let urlString = url else {
             articleImageView.image = UIImage(resource: .placeholder)
             return
         }
         
-        // 2. Set the current URL to track this specific cell's request
+        // Set the current URL to track this specific cell's request
         currentImageURL = urlString
         
-        // 3. Subscribe to the Observable
         ImageLoader.shared.loadImage(from: urlString)
             .subscribe(onNext: { [weak self] image in
                 guard let self = self else { return }
                 
-                // 4. THE MOST IMPORTANT CHECK:
-                // Only update if the cell hasn't been reused for a different URL
                 guard self.currentImageURL == urlString else { return }
                 
                 if let image = image {
@@ -148,7 +142,7 @@ final class HomeTableViewCell: UITableViewCell {
                     self.articleImageView.image = UIImage(resource: .placeholder)
                 }
             })
-            .disposed(by: cellDisposeBag) // 5. Automatic cancellation on reuse
+            .disposed(by: cellDisposeBag) // Automatic cancellation on reuse
     }
     
     private func setImageWithFade(_ image: UIImage?) {

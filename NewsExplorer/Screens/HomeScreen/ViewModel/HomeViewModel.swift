@@ -31,7 +31,7 @@ class HomeViewModel {
             currentPage = 1
         }
         
-        // 🚀 Critical Guard: Don't fetch if already fetching OR if we reached the end
+        // Don't fetch if already fetching OR if we reached the end
         guard !isFetching.value && !isLastPage.value else { return }
         
         isFetching.accept(true)
