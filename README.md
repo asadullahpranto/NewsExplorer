@@ -23,7 +23,7 @@ Open your terminal and run the following commands:
 
 ```
 1. why we use mvvm-c pattern
-2. need to separate views from viewControllers for mvvm pattern
+2. why we need to separate views from viewControllers in mvvm pattern?
 3. what is mvvmc, pattern or architecture? (design pattern vs architecture)
 4. RxSwift BehaviorRelay vs PublishSubject
 5. story: there is a room where peoples are entering from one side and leaving from another side, if i show this using a tableview what problem may occur?

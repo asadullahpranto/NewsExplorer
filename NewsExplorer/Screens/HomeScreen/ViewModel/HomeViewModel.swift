@@ -25,7 +25,7 @@ class HomeViewModel {
         self.newsService = newsService
     }
     
-    func fetchArticles(fromDate: String = "2025-12-05", isRefresh: Bool = false) {
+    func fetchArticles(fromDate: String = "2025-12-10", isRefresh: Bool = false) {
         if isRefresh {
             isLastPage.accept(false) // Reset on refresh
             currentPage = 1
@@ -36,7 +36,7 @@ class HomeViewModel {
         
         isFetching.accept(true)
         
-        newsService.fetchArticles(query: currentQuery, fromDate: "2025-12-05", pageNo: currentPage)
+        newsService.fetchArticles(query: currentQuery, fromDate: fromDate, pageNo: currentPage)
             .observe(on: MainScheduler.instance)
             .subscribe { [weak self] (response: NewsResponse) in
                 guard let self = self else { return }

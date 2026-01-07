@@ -9,31 +9,10 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class HomeViewController: UIViewController {
+class HomeViewController: GenericViewController<HomeView> {
     
     private let disposeBag = DisposeBag()
     weak var coordinator: HomeCoordinator?
-    
-    private let refreshControl = UIRefreshControl()
-    
-    private func createFooterSpinner() -> UIView {
-        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 64))
-        let spinner = UIActivityIndicatorView()
-        spinner.center = footerView.center
-        footerView.addSubview(spinner)
-        spinner.startAnimating()
-        return footerView
-    }
-    
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.showsHorizontalScrollIndicator = false
-        tableView.backgroundColor = .clear
-        tableView.cellLayoutMarginsFollowReadableWidth = true
-        
-        return tableView
-    }()
     
     private let viewModel = HomeViewModel(newsService: NewsAPIService())
 
@@ -45,7 +24,6 @@ class HomeViewController: UIViewController {
     
     private func setupViews() {
         configureNavigationBar()
-        setupTableView()
         bindViewModel()
     }
     
@@ -54,30 +32,11 @@ class HomeViewController: UIViewController {
         navigationItem.largeTitleDisplayMode = .always
     }
     
-    private func setupTableView() {
-        view.addSubview(tableView)
-        configureTableView()
-        tableView.pinToEdges(of: view)
-    }
-    
-    private func configureTableView() {
-        tableView.register(HomeTableViewCell.self, forCellReuseIdentifier: HomeTableViewCell.className)
-        tableView.separatorStyle = .none
-
-        refreshControl.tintColor = .systemBlue
-        refreshControl.attributedTitle = NSAttributedString(
-            string: "Updating news...",
-            attributes: [.font: UIFont.systemFont(ofSize: 12)]
-        )
-        
-        tableView.refreshControl = refreshControl
-    }
-    
     private func bindViewModel() {
         // Bind articles to table view
         viewModel.articles
             .observe(on: MainScheduler.instance)
-            .bind(to: tableView.rx.items) { tableView, row, article in
+            .bind(to: rootView.tableView.rx.items) { tableView, row, article in
                 let cell = tableView.dequeueReusableCell(withIdentifier: HomeTableViewCell.className) as! HomeTableViewCell
                 cell.configure(with: article)
                 
@@ -85,11 +44,11 @@ class HomeViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        tableView.rx.willDisplayCell
+        rootView.tableView.rx.willDisplayCell
             .subscribe(onNext: { [weak self] cell, indexPath in
                 guard let self = self else { return }
                 
-                let totalRows = self.tableView.numberOfRows(inSection: indexPath.section)
+                let totalRows = self.rootView.tableView.numberOfRows(inSection: indexPath.section)
                 
                 if indexPath.row == totalRows - 1 && !viewModel.isLastPage.value {
                     self.viewModel.fetchArticles()
@@ -97,7 +56,7 @@ class HomeViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        refreshControl.rx.controlEvent(.valueChanged)
+        rootView.refreshControl.rx.controlEvent(.valueChanged)
             .subscribe(onNext: { [weak self] in
                 // We pass isRefresh: true to reset the page count and clear the list
                 self?.viewModel.fetchArticles(isRefresh: true)
@@ -112,14 +71,14 @@ class HomeViewController: UIViewController {
                 if fetching {
                     // Only show footer if we aren't at page 1 (refreshing)
                     // and if we actually have data to append to
-                    if !self.viewModel.articles.value.isEmpty && !self.refreshControl.isRefreshing {
-                        self.tableView.tableFooterView = self.createFooterSpinner()
+                    if !self.viewModel.articles.value.isEmpty && !self.rootView.refreshControl.isRefreshing {
+                        self.rootView.tableView.tableFooterView = self.rootView.spinnerView
                     }
                 } else {
                     // Logic to hide the footer with a slight delay for smooth UX
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         if !self.viewModel.isFetching.value {
-                            self.tableView.tableFooterView = nil
+                            self.rootView.tableView.tableFooterView = nil
                         }
                     }
                 }
@@ -129,12 +88,12 @@ class HomeViewController: UIViewController {
         // This ensures the top spinner is ALWAYS in sync with the ViewModel
         viewModel.isFetching
             .observe(on: MainScheduler.instance)
-            .bind(to: refreshControl.rx.isRefreshing)
+            .bind(to: rootView.refreshControl.rx.isRefreshing)
             .disposed(by: disposeBag)
 
         
         // Handle row selection
-        tableView.rx.modelSelected(Article.self)
+        rootView.tableView.rx.modelSelected(Article.self)
             .subscribe(onNext: { [weak self] article in
                 self?.coordinator?.showArticleDetail(article)
             })
@@ -151,14 +110,5 @@ class HomeViewController: UIViewController {
             .disposed(by: disposeBag)
         
         viewModel.fetchArticles()
-    }
-
-    private func setupTableViewConstraints() {
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
     }
 }
