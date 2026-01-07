@@ -122,27 +122,30 @@ final class HomeTableViewCell: UITableViewCell {
     }
     
     private func loadImage(url: String?) {
+        let placeHolder = UIImage(resource: .placeholder)
+        
         guard let urlString = url else {
-            articleImageView.image = UIImage(resource: .placeholder)
+            articleImageView.image = placeHolder
             return
         }
         
         // Set the current URL to track this specific cell's request
         currentImageURL = urlString
         
-        ImageLoader.shared.loadImage(from: urlString)
-            .subscribe(onNext: { [weak self] image in
-                guard let self = self else { return }
-                
-                guard self.currentImageURL == urlString else { return }
-                
-                if let image = image {
-                    self.setImageWithFade(image)
-                } else {
-                    self.articleImageView.image = UIImage(resource: .placeholder)
-                }
-            })
-            .disposed(by: cellDisposeBag) // Automatic cancellation on reuse
+        if let image = ImageCache.shared.image(forKey: urlString) {
+            articleImageView.image = image
+        } else {
+            articleImageView.setImage(nil, placeholder: placeHolder)
+            ImageLoader.shared.loadImage(from: urlString)
+                .subscribe(onNext: { [weak self] image in
+                    guard let self = self else { return }
+                    
+                    guard self.currentImageURL == urlString else { return }
+                    
+                    self.articleImageView.setImage(image)
+                })
+                .disposed(by: cellDisposeBag) // Automatic cancellation on reuse
+        }
     }
     
     private func setImageWithFade(_ image: UIImage?) {
