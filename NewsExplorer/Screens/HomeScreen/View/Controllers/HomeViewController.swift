@@ -15,11 +15,14 @@ class HomeViewController: GenericViewController<HomeView> {
     weak var coordinator: HomeCoordinator?
     
     private let viewModel = HomeViewModel(newsService: NewsAPIService())
+    
+    private let searchController = UISearchController(searchResultsController: nil)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
+        setupSearchController()
     }
     
     private func setupViews() {
@@ -48,10 +51,14 @@ class HomeViewController: GenericViewController<HomeView> {
             .subscribe(onNext: { [weak self] cell, indexPath in
                 guard let self = self else { return }
                 
+                let fifteenDaysAgo = Calendar.current.date(byAdding: .day, value: -15, to: Date())!
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                
                 let totalRows = self.rootView.tableView.numberOfRows(inSection: indexPath.section)
                 
                 if indexPath.row == totalRows - 1 && !viewModel.isLastPage.value {
-                    self.viewModel.fetchArticles()
+                    self.viewModel.fetchArticles(fromDate: formatter.string(from: fifteenDaysAgo))
                 }
             })
             .disposed(by: disposeBag)
@@ -59,7 +66,10 @@ class HomeViewController: GenericViewController<HomeView> {
         rootView.refreshControl.rx.controlEvent(.valueChanged)
             .subscribe(onNext: { [weak self] in
                 // We pass isRefresh: true to reset the page count and clear the list
-                self?.viewModel.fetchArticles(isRefresh: true)
+                let fifteenDaysAgo = Calendar.current.date(byAdding: .day, value: -15, to: Date())!
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                self?.viewModel.fetchArticles(fromDate: formatter.string(from: fifteenDaysAgo), isRefresh: true)
             })
             .disposed(by: disposeBag)
         
@@ -109,6 +119,19 @@ class HomeViewController: GenericViewController<HomeView> {
             })
             .disposed(by: disposeBag)
         
-        viewModel.fetchArticles()
+        searchController.searchBar.rx.text
+            .orEmpty
+            .bind(to: viewModel.searchQuery)
+            .disposed(by: disposeBag)
+        
+//        viewModel.fetchArticles()
+    }
+    
+    private func setupSearchController() {
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search for articles..."
+        
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 }

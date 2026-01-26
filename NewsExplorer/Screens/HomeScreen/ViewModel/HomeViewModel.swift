@@ -14,6 +14,7 @@ class HomeViewModel {
     let articles = BehaviorRelay<[Article]>(value: [])
     let isFetching = BehaviorRelay<Bool>(value: false)
     let isLastPage = BehaviorRelay<Bool>(value: false)
+    let searchQuery =  BehaviorRelay<String>(value: "apple")
     let error = PublishSubject<String>()
     
     private let newsService: NewsAPIRepository
@@ -23,9 +24,10 @@ class HomeViewModel {
     
     init(newsService: NewsAPIRepository) {
         self.newsService = newsService
+        bindSearch()
     }
     
-    func fetchArticles(fromDate: String = "2025-12-10", isRefresh: Bool = false) {
+    func fetchArticles(fromDate: String, isRefresh: Bool = false) {
         if isRefresh {
             isLastPage.accept(false) // Reset on refresh
             currentPage = 1
@@ -60,6 +62,49 @@ class HomeViewModel {
                 self?.error.onNext(error.localizedDescription)
                 self?.isFetching.accept(false)
             }
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindSearch() {
+        searchQuery
+            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .flatMapLatest { [weak self] query -> Single<NewsResponse> in
+                guard let self else {
+                    return .just(NewsResponse(status: "ok", totalResults: 0, articles: []))
+                }
+                
+                let request: Single<NewsResponse>
+                
+                let fifteenDaysAgo = Calendar.current.date(byAdding: .day, value: -15, to: Date())!
+
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                
+                if query.isEmpty {
+                    request = self.newsService.fetchArticles(
+                        query: "apple",
+                        fromDate: formatter.string(from: fifteenDaysAgo),
+                        pageNo: 1
+                    )
+                } else {
+                    request = self.newsService.fetchArticles(
+                        query: query,
+                        fromDate: formatter.string(from: fifteenDaysAgo),
+                        pageNo: 1
+                    )
+                }
+                
+                return request
+                    .catch { [weak self] error in
+                        self?.error.onNext(error.localizedDescription)
+                        return .just(.init(status: "ok", totalResults: 0, articles: []))
+                    }
+            }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] response in
+                self?.articles.accept(response.articles)
+            })
             .disposed(by: disposeBag)
     }
 }
